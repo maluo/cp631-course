@@ -12,6 +12,11 @@
 
 https://www.youtube.com/watch?v=RTX-ik_8i-k
 
+
+### Example:
+
+https://www.bragitoff.com/2017/08/simpsons-13-rule-c-program/
+
 #### Simpson's rule calculator: 
 
 https://www.emathhelp.net/calculators/calculus-2/simpsons-rule-calculator/?f=x&a=0&b=2&n=100

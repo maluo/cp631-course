@@ -9,8 +9,13 @@
 ### Task 1.
 
 #### Simpson's rule explanation:
+
 https://www.youtube.com/watch?v=RTX-ik_8i-k
 
-#### Simpson's rule calculator: https://www.emathhelp.net/calculators/calculus-2/simpsons-rule-calculator/?f=x&a=0&b=2&n=100
+#### Simpson's rule calculator: 
+
+https://www.emathhelp.net/calculators/calculus-2/simpsons-rule-calculator/?f=x&a=0&b=2&n=100
 
 ### Task 2.
+
+#### Will figure out Tomorrow

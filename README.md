@@ -23,6 +23,10 @@ https://www.codesansar.com/numerical-methods/integration-using-simpson-1-3-metho
 
 https://www.emathhelp.net/calculators/calculus-2/simpsons-rule-calculator/?f=x&a=0&b=2&n=100
 
+#### Useful open mp resources
+
+https://www.dartmouth.edu/~rc/classes/intro_openmp/compile_run.html
+
 ### Task 2.
 
 #### Will figure out Tomorrow

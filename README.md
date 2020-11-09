@@ -13,9 +13,11 @@
 https://www.youtube.com/watch?v=RTX-ik_8i-k
 
 
-### Example:
+#### Example:
 
 https://www.bragitoff.com/2017/08/simpsons-13-rule-c-program/
+
+https://www.codesansar.com/numerical-methods/integration-using-simpson-1-3-method-c-program.htm
 
 #### Simpson's rule calculator: 
 

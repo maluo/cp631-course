@@ -9,12 +9,11 @@ Step 2.
 */
 
 #include "omp.h"
-#define N 10
-#define BS 2
-#define EPS 0.000001
-
 #include "stdlib.h"
 #include "stdio.h"
+
+#define N 10
+#define BS 2
 
 void matmul_tasks (int **A, int **B);
 int** create_Array(int row, int col);

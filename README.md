@@ -4,6 +4,22 @@
 
 ## Date Created: November 8, 2020
 
+## Local environment setup
+
+### WSL and Ubuntu 18.04 VM on Windows System
+
+#### Turn windows feature on
+
+#### Get ubuntu 18.04 from app store
+
+#### Start and mount your local drive
+
+https://docs.microsoft.com/en-us/windows/wsl/wsl2-mount-disk
+
+#### Installation on MingW and OpenMP on Ubuntu
+
+#### Connect from Visual code to Ubuntu through remote wsl
+
 # Assignment 2
 
 ### Task 1.

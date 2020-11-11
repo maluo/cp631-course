@@ -1,16 +1,22 @@
 /*
-Step 1.
-To compile this code, first enable a newer version of gcc with
-scl enable devtoolset-7 bash - This is needed to support advanced OpenMP features
+* To compile this code, first enable a newer version of gcc with
+* scl enable devtoolset-7 bash - This is needed to support advanced OpenMP features
+*/
 
-Step 2.
-//gcc -fopenmp -O2 hello.c -o hello.x
-
+/*
+** @Author: Ma Luo
+** @Date : Nov 11, 2020
+** @Params: Row and Column number
+** @A init: row_index*row + column_index
+** Compile: gcc -fopenmp -O2 dymatrixmptask.c -o dymatrixmptask.x
+** Running: ./dymatrixmptask.x
+**
 */
 
 #include "omp.h"
 #include "stdlib.h"
 #include "stdio.h"
+#include <sys/time.h>
 
 #define N 10
 #define BS 2
@@ -23,6 +29,8 @@ void printMatrix(int **arr);
 
 int main ()
 {
+    struct timeval  dtStart, dtEnd;
+
     int **A, **B;
     int i,j;
 
@@ -35,6 +43,8 @@ int main ()
         }
     }
 
+    gettimeofday(&dtStart, NULL);
+
     printf("A = [\n");
     printMatrix(A);
     printf("]\n");
@@ -44,6 +54,12 @@ int main ()
     printf("B = [\n");
     printMatrix(B);
     printf("]\n");
+
+    gettimeofday(&dtEnd, NULL);
+
+    printf ("Total time = %f seconds\n",
+         (double) (dtEnd.tv_usec - dtStart.tv_usec) / 1000000 +
+         (double) (dtEnd.tv_sec - dtStart.tv_sec));
 
     destroyArray(A);
     destroyArray(B);

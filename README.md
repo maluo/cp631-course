@@ -20,7 +20,7 @@ https://docs.microsoft.com/en-us/windows/wsl/wsl2-mount-disk
 
 #### Connect from Visual code to Ubuntu through remote wsl
 
-# Assignment 2
+## Assignment 2
 
 ### Task 1.
 
@@ -42,6 +42,12 @@ https://www.emathhelp.net/calculators/calculus-2/simpsons-rule-calculator/?f=x&a
 #### Useful open mp resources
 
 https://www.dartmouth.edu/~rc/classes/intro_openmp/compile_run.html
+
+##### VS Code Config, Task JSON
+
+https://askubuntu.com/questions/966314/use-gcc-from-windows-sublinuxsystem-in-vscode-on-windows
+
+
 
 ### Task 2.
 

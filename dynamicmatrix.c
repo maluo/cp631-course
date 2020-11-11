@@ -2,16 +2,20 @@
 #include<math.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/time.h>
 
 /*
 ** @Author: Ma Luo
 ** @Date : Nov 11, 2020
 ** @Params: Row and Column number
 ** @A init: row_index*row + column_index
+** Compile: gcc -fopenmp -O2 dynamicmatrix.c -o dynamicmatrix.x
+** Running: ./dynamicmatrix.x
+**
 */
 
-#define MAX_ROW 3
-#define MAX_COL 3
+#define MAX_ROW 10
+#define MAX_COL 10
 
 int** create_Array(int row, int col);
 void destroyArray(int** arr);
@@ -19,6 +23,8 @@ int cal_A(int **arr, int row, int col);
 void printMatrix(int **arr);
 
 int main() {
+
+    struct timeval  dtStart, dtEnd;
 
     int **A, **B;
     A = create_Array(MAX_ROW,MAX_COL);
@@ -37,12 +43,20 @@ int main() {
         }
     }
 
+    gettimeofday(&dtStart, NULL);
+
     printf("A = [\n");
     printMatrix(A);
     printf("]\n");
     printf("B = [\n");
     printMatrix(B);
     printf("]\n");
+
+    gettimeofday(&dtEnd, NULL);
+
+    printf ("Total time = %f seconds\n",
+         (double) (dtEnd.tv_usec - dtStart.tv_usec) / 1000000 +
+         (double) (dtEnd.tv_sec - dtStart.tv_sec));
 
     destroyArray(A);
     destroyArray(B);

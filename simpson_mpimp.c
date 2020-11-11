@@ -1,8 +1,14 @@
-/* trapezoid.c -- Parallel Trapezoidal Rule
- *
- * Program estimates of the integral from a to b of f(x)
- *    using the trapezoidal rule and n trapezoids.
- * Compile with:  mpicc -O2 trapezoid.c  trapezoid_rule.c  func.c
+/* @Author: Ma Luo
+ * @Date: Nov 11, 2020
+ * 
+ * Program estimates of the integral from a to b of f(x), could be changed with the defined function
+ * 
+ * For the sub-integral function, we have started multiple threads help running the result for the sub-interval
+ *  
+ * Compile with:  mpicc -O2  simpson_mpimp.c -o simpson_mpimp.x
+ * 
+ * Run with: mpirun -np 3 ./simpson_mpimp.x
+ * 
  */
 
 
@@ -10,8 +16,12 @@
 #include<math.h>
 #include "mpi.h"
 #include "omp.h"
+#include <sys/time.h>
 
 #define f(x) x
+#define LOWBOUND 0
+#define UPBOUND 120
+#define NUMINTVALS 60
 //1/(1+x*x)
 
 float Simpson_Integral(float lower, float upper, int n, float stepSize)
@@ -42,11 +52,13 @@ float Simpson_Integral(float lower, float upper, int n, float stepSize)
 
 int main(int argc, char** argv) 
 {
+    struct timeval  dtStart, dtEnd;
+
     int         my_rank;   /* My process rank           */
     int         p;         /* The number of processes   */
-    float       a = 0;   /* Left endpoint             */
-    float       b = 12;   /* Right endpoint            */
-    int         n = 6;  /* Number of trapezoids      */
+    float       a = LOWBOUND;   /* Left endpoint             */
+    float       b = UPBOUND;   /* Right endpoint            */
+    int         n = NUMINTVALS;  /* Number of trapezoids      */
     float       h;         /* Trapezoid base length     */
     float       local_a;   /* Left endpoint my process  */
     float       local_b;   /* Right endpoint my process */
@@ -75,14 +87,18 @@ int main(int argc, char** argv)
     /* Sum up the integrals calculated by each process */
     if (my_rank == 0) 
     {
-
+        gettimeofday(&dtStart, NULL);
         total = integral; //Give some open mp task here
         for (source = 1; source < p; source++) 
         {
             MPI_Recv(&integral, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             printf("PE %d <- %d,   %f\n", my_rank,source, integral);
             total = total + integral;
-	}
+	    }
+        gettimeofday(&dtEnd, NULL);
+        printf ("Total time = %f seconds\n",
+         (double) (dtEnd.tv_usec - dtStart.tv_usec) / 1000000 +
+         (double) (dtEnd.tv_sec - dtStart.tv_sec));
     } 
     else 
     {

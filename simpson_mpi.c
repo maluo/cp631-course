@@ -18,11 +18,12 @@
 #include<math.h>
 #include "mpi.h"
 #include "omp.h"
+#include <sys/time.h>
 
 #define f(x) x
 #define LOWBOUND 0
-#define UPBOUND 12
-#define NUMINTVALS 6
+#define UPBOUND 120
+#define NUMINTVALS 60
 
 //1/(1+x*x)
 
@@ -52,6 +53,8 @@ float Simpson_Integral(float lower, float upper, int n, float stepSize)
 
 int main(int argc, char** argv) 
 {
+    struct timeval  dtStart, dtEnd;
+
     int         my_rank;   /* My process rank           */
     int         p;         /* The number of processes   */
     float       a = LOWBOUND;   /* Left endpoint             */
@@ -68,7 +71,7 @@ int main(int argc, char** argv)
     int         dest = 0;  /* All messages go to 0      */
     int         tag = 0;
 
-  
+    
     MPI_Init(&argc, &argv);
 
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
@@ -85,14 +88,19 @@ int main(int argc, char** argv)
     /* Sum up the integrals calculated by each process */
     if (my_rank == 0) 
     {
-
+        gettimeofday(&dtStart, NULL);
         total = integral;
         for (source = 1; source < p; source++) 
         {
             MPI_Recv(&integral, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             printf("PE %d <- %d,   %f\n", my_rank,source, integral);
             total = total + integral;
-	}
+	    }
+        gettimeofday(&dtEnd, NULL);
+
+        printf ("Total time = %f seconds\n",
+         (double) (dtEnd.tv_usec - dtStart.tv_usec) / 1000000 +
+         (double) (dtEnd.tv_sec - dtStart.tv_sec));
     } 
     else 
     {

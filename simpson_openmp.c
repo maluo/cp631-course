@@ -10,18 +10,20 @@
  * Assign number of threads going to run with: export OMP_NUM_THREADS = 3, please run with 3 cause we did not make the program that flexbile, this would be based on the 
  *  number of sub-intervals we have. NUMINTVALS / nthreads should be an integer
  * 
- * Run with: ./simpson_openmp.x
+ * Compile: gcc -fopenmp -O2 simpson_openmp.c -o simpson_openmp.x
+ * Run with: OMP_NUM_THREADS=3 ./simpson_openmp.x
  * 
  */
 
 #include <stdio.h>
 #include<math.h>
 #include "omp.h"
+#include <sys/time.h>
 
 #define f(x) x
 #define LOWBOUND 0
-#define UPBOUND 12
-#define NUMINTVALS 6
+#define UPBOUND 120
+#define NUMINTVALS 60
 //1/(1+x*x)
 
 float Simpson_Integral(float lower, float upper, int n, float stepSize)
@@ -49,6 +51,9 @@ float Simpson_Integral(float lower, float upper, int n, float stepSize)
 }
 
 int main() {
+    
+    struct timeval  dtStart, dtEnd;
+
     float       a = LOWBOUND;   /* Left endpoint */
     float       b = UPBOUND;   /* Right endpoint */
     int         n = NUMINTVALS;  /* Number of sub-intervals */
@@ -73,11 +78,17 @@ int main() {
     local_b = local_a + local_n*h;
     integral = Simpson_Integral(local_a, local_b, local_n, h);
 
+    gettimeofday(&dtStart, NULL);
+
 #pragma omp critical
 {
     total = total + integral;
 }
+    gettimeofday(&dtEnd, NULL);
 
 }
 printf("Total ingegral is: %f \n",total);
+        printf ("Total time = %f seconds\n",
+         (double) (dtEnd.tv_usec - dtStart.tv_usec) / 1000000 +
+         (double) (dtEnd.tv_sec - dtStart.tv_sec));
 }

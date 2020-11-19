@@ -7,9 +7,11 @@ No timing calls or error checks in this version, for clarity.
 
 Compile on graham with:
 
-nvcc -arch=sm_60 -O2 saxpy_cuda.cu 
+nvcc -arch=sm_60 -O2 task3.cu -o ./t3.x
 
-nvprof ./a.out
+nvprof ./t3.x <N> <K>, let's make two inputs
+
+Following the course example we have develop two GPU methods, and we are going to compare the performance
 
 
 */
@@ -18,7 +20,7 @@ nvprof ./a.out
 #include "cuda.h" /* CUDA runtime API */
 #include "cstdio" 
 
-__global__ void prime_gpu(int *vecY, int *vecX, int n) {
+__global__ void find_Prime_gpu(int *vecY, int *vecX, int n) {
     int i;
 
     i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -44,17 +46,12 @@ int main(int argc, char *argv[]) {
     int n = atoi(argv[1]);
     int k = atoi(argv[2]);
 
-    printf("n = %d\nk = %d\n", n, k);
-    
-    if (k + n < 0) {
-        // make sure stay within in precision
-        k = INT_MAX - n;
-    }
+    printf("N = %d\nK = %d\n", n, k);
 
     size_t memsize;
     int i, blockSize, nBlocks;
 
-    memsize = k * sizeof(int);
+    memsize = k * sizeof(int); //not like float in course example
 
     /* allocate arrays on host */
 
@@ -87,7 +84,7 @@ int main(int argc, char *argv[]) {
 
     /* execute kernel (asynchronous!) */
 
-    prime_gpu<<<nBlocks, blockSize>>>(y_dev, x_dev, k);
+    find_Prime_gpu<<<nBlocks, blockSize>>>(y_dev, x_dev, k);
 
     /* retrieve results from device (synchronous) */
     cudaMemcpy(y_shadow, y_dev, memsize, cudaMemcpyDeviceToHost);

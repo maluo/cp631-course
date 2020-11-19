@@ -7,13 +7,14 @@ No timing calls or error checks in this version, for clarity.
 
 Compile on graham with:
 
-nvcc -arch=sm_60 -O2 saxpy_cuda.cu 
+nvcc -arch=sm_60 -O2 task2.cu -o ./t2.x
 
-nvprof ./a.out
+nvprof ./t2.x
+
+Following the course example we have develop two GPU methods, and we are going to compare the performance
 
 
 */
-
 
 #include "cuda.h" /* CUDA runtime API */
 #include "cstdio" 
@@ -75,7 +76,7 @@ int main(int argc, char *argv[]) {
     cudaMemcpy(x_dev, x_host, memsize, cudaMemcpyHostToDevice);
     cudaMemcpy(y_dev, y_host, memsize, cudaMemcpyHostToDevice);
 
-    /* set up device execution configuration */
+    /* setting the grids and blocks config */
     dim3 blockDef2(16, 16, 1);
     dim3 gridDef2(sqrt(n/256), sqrt(n/256), 1);
 

@@ -7,10 +7,11 @@ No timing calls or error checks in this version, for clarity.
 
 Compile on graham with:
 
-nvcc -arch=sm_60 -O2 saxpy_cuda.cu 
+nvcc -arch=sm_60 -O2 task1.cu -o ./t1.x
 
-nvprof ./a.out
+nvprof ./t1.x
 
+Following the course example we have develop two GPU methods, and we are going to compare the performance
 
 */
 
@@ -26,7 +27,8 @@ void saxpy_cpu(float *vecY, float *vecX, float alpha, int n) {
         vecY[i] = alpha * vecX[i] + vecY[i];
 }
 
-__global__ void part1_gpu(float *vecY, float *vecX ,int n) {
+/*Simply half half the vector*/
+__global__ void method1_gpu(float *vecY, float *vecX ,int n) {
     int i;
 
     i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -38,7 +40,8 @@ __global__ void part1_gpu(float *vecY, float *vecX ,int n) {
     //printf("vecY %f\n", vecY[i]);
 }
 
-__global__ void part2_gpu(float *vecY, float *vecX ,int n) {
+/*Half even half odd*/
+__global__ void method2_gpu(float *vecY, float *vecX ,int n) {
     int i;
 
     i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -97,7 +100,8 @@ int main(int argc, char *argv[]) {
 
     /* execute kernel (asynchronous!) */
 
-    part2_gpu<<<nBlocks, blockSize>>>(y_dev, x_dev, n);
+    //method1_gpu<<<nBlocks, blockSize>>>(y_dev, x_dev, n);
+    method2_gpu<<<nBlocks, blockSize>>>(y_dev, x_dev, n);
 
     /* execute host version (i.e. baseline reference results) */
     //saxpy_cpu(y_host, x_host, alpha, n);

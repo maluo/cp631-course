@@ -8,7 +8,32 @@ void destroyArray(int **arr);
 int cal_A(int **arr, int row, int col);
 void printMatrix(int **arr, int row, int col);
 void init_data(int ***data_ptr, int dim_x, int dim_y, int val);
+void matrix_mul(int ***data_ptr, int **A, int **B, int row, int col);
 
+void matrix_mul(int ***data_ptr, int **A, int **B, int row, int col)
+{
+    int i, j, k;
+
+    int **data;
+    data = (int **)malloc(sizeof(int *) * row);
+    for (k = 0; k < row; k++)
+    {
+        data[k] = (int *)malloc(sizeof(int) * row);
+    }
+
+    for (i = 0; i < row; i++)
+    {
+        for (j = 0; j < row; j++)
+        {
+            for (k = 0; k < col; k++)
+            {
+                data[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+
+    *data_ptr = data;
+}
 
 void printMatrix(int **arr, int row, int col)
 {

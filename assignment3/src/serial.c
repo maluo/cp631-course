@@ -20,41 +20,15 @@ int main()
 
     printf("N - ROWS in A = %d\n", N);
 
-    for (i = 0; i < row; i++)
-    {
-        for (j = 0; j < col; j++)
-        {
-            A[i][j] = 2;
-        }
-    }
-
     printf("A = [\n");
     printMatrix(A, row, col);
     printf("]\n");
 
-    for (i = 0; i < col; i++)
-    {
-        for (j = 0; j < row; j++)
-        {
-            B[i][j] = 2;
-        }
-    }
-
     printf("B = [\n");
     printMatrix(B, col, row);
     printf("]\n");
-
-    printf("multiply of the matrix=\n");
-    for (i = 0; i < row; i++)
-    {
-        for (j = 0; j < row; j++)
-        {
-            for (k = 0; k < col; k++)
-            {
-                MUL[i][j] += A[i][k] * B[k][j];
-            }
-        }
-    }
+    
+    matrix_mul(&MUL,A,B,row,col);
     
     printf("MUL = [\n");
     printMatrix(MUL, row, row);

@@ -1,6 +1,4 @@
-//Matrix multiplication using shared and non shared kernal
-
- /*
+/*
 nvcc -arch=sm_60 -O2 testcuda.cu -o ./testcuda.x
 nvprof ./testcuda.x
 */
@@ -12,42 +10,42 @@ nvprof ./testcuda.x
 
 #define TILE_WIDTH 2
 #define ROWN 4
-
-/*matrix multiplication kernels*/
-
  
-void matrix_mul_A( float **MUL, float **A, float **B, int row, int col) {
-   int i, j, k;
-    for (i = 0; i < row; i++)
-    {
-        for (j = 0; j < row; j++)
-        {
-            for (k = 0; k < col; k++)
-            {
-               MUL[i][j] += A[i][k] * B[k][j];
-            }
-        }
-    }
-}
+// void matrix_mul_A(int **MUL, int **A, int **B, int row, int col) {
+//    int i, j, k;
+//     for (i = 0; i < row; i++)
+//     {
+//         for (j = 0; j < row; j++)
+//         {
+//             for (k = 0; k < col; k++)
+//             {
+//                MUL[i][j] += A[i][k] * B[k][j];
+//             }
+//         }
+//     }
+// }
 
 //non shared
 __global__ void
-MatrixMul( float *Md , float *Nd , float *Pd , const int WIDTH )
+MatrixMul(int **MUL, int **A, int **B, int max_row, int max_col, int N)
 {
-           // calculate thread id
-         unsigned int col = TILE_WIDTH*blockIdx.x + threadIdx.x ;
+         unsigned int COL = TILE_WIDTH*blockIdx.x + threadIdx.x ;
+         unsigned int ROW = TILE_WIDTH*blockIdx.y + threadIdx.y ;
 
-         unsigned int row = TILE_WIDTH*blockIdx.y + threadIdx.y ;
+         int tmpSum = 0;
 
-         for (int k = 0 ; k<WIDTH ; k++ )
-         {
-                  Pd[row*WIDTH + col]+= Md[row * WIDTH + k ] * Nd[ k * WIDTH + col] ;
-         }
+         if (ROW < max_row && COL < max_col) {
+            // each thread computes one element of the block sub-matrix
+            for (int i = 0; i < N; i++) {
+                tmpSum += A[ROW * N + i] * B[i * N + COL];
+            }
+        }
+        MUL[ROW * N + COL] = tmpSum;
 }
 
 // shared
 __global__ void
-MatrixMulSh( float *Md , float *Nd , float *Pd , const int WIDTH )
+MatrixMulSh( int *Md , int *Nd , int *Pd , const int WIDTH )
 {
         //Taking shared array to break the MAtrix in Tile widht and fatch them in that array per ele
           __shared__ float Mds [TILE_WIDTH][TILE_WIDTH] ;
@@ -94,7 +92,7 @@ int main ()
 
   //create device array cudaMalloc ( (void **)&array_name, sizeofmatrixinbytes) ;
 
-  cudaMalloc((void **) &array1_d ,  memsize) ;
+  cudaMalloc((void **) &array1_d , memsize) ;
   cudaMalloc((void **) &array2_d , memsize) ;
 
   //copy host array to device array; cudaMemcpy ( dest , source , WIDTH , direction )
@@ -107,24 +105,24 @@ int main ()
 
   //calling kernal
 
-  dim3 dimGrid ( WIDTH/TILE_WIDTH , TILE_WIDTH ,1 );
+  dim3 dimGrid ( WIDTH/TILE_WIDTH , TILE_WIDTH);
 
-  dim3 dimBlock( TILE_WIDTH, TILE_WIDTH, 1 );
+  dim3 dimBlock( TILE_WIDTH, TILE_WIDTH);
 
 // Change if 0 to if 1 for running non shared code and make if 0 for shared memory code
-#if 0
+#if 1
 
-                MatrixMul <<<dimGrid,dimBlock>>> ( array1_d , array2_d ,M_result_array_d , WIDTH) ;
+                MatrixMul <<<dimGrid,dimBlock>>> (M_result_array_d, array1_d , array2_d, WIDTH, TILE_WIDTH,TILE_WIDTH) ;
 
 #endif
  
 #if 0
 
-               MatrixMulSh<<<dimGrid,dimBlock>>> ( array1_d , array2_d ,M_result_array_d , WIDTH) ;
+               MatrixMulSh<<<dimGrid,dimBlock>>> (M_result_array_d, array1_d , array2_d , WIDTH, TILE_WIDTH) ;
 
 #endif
 
-#if 1
+#if 0
                //host version, test with CPU code
                matrix_mul_A(result_array_h,array1_h,array2_h,WIDTH,TILE_WIDTH);
                printMatrix(result_array_h, WIDTH, WIDTH);       

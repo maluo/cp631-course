@@ -5,48 +5,39 @@
 #include "matrix_lib.h"
 
 //Fix Number
-#define MAX_COL 2
+#define MAX_COL 4
 //Could be changed to anything
 #define N 4
 
 int main()
 {
+    int row = N, col = MAX_COL, i, j, k;
+    float **A, **B, **MUL;
+    float *AH, *BH, *RES;
 
-    int A[N][MAX_COL];
-    int i=0,j=0;
-    for(i = 0; i< N; i++){
-        for (j = 0; j < MAX_COL; j++){
-            A[i][j] = 2;
-        }
-    }
+    init_data(&A, N, MAX_COL, 2);
+    printMatrix(A,N,MAX_COL);
+    init_data(&B, MAX_COL, N, 1);
+    printMatrix(B,MAX_COL,N);
+    init_data_1D(&RES,N*MAX_COL,0);
+    init_data(&MUL, N, MAX_COL, 0);
 
+    GET_2D_TO_1D_Float(&AH,A,N,MAX_COL);//Array allocation inside function
+    printMatrix1D(AH,N*MAX_COL);
 
-    // int row = N, col = MAX_COL, i, j, k;
-    // int **A, **B, **MUL;
+    GET_2D_TO_1D_Float(&BH,B,MAX_COL,N);//Array allocation inside function
+    printMatrix1D(BH,N*MAX_COL);
 
-    // init_data(&A, N, MAX_COL, 2);
-    // init_data(&B, MAX_COL, N, 2);
-    // init_data(&MUL, N, N, 0);
+    // cpuMatMul(AH,BH,RES,N,MAX_COL);
+    // GET_1D_TO_2D_Float(RES,MUL,N,MAX_COL);
+    // printMatrix(MUL, N, MAX_COL);
 
-    // printf("N - ROWS in A = %d\n", N);
-
-    // printf("A = [\n");
-    // printMatrix(A, row, col);
-    // printf("]\n");
-
-    // printf("B = [\n");
-    // printMatrix(B, col, row);
-    // printf("]\n");
-
-    // matrix_mul(&MUL,A,B,row,col);
-
-    // printf("MUL = [\n");
-    // printMatrix(MUL, row, row);
-    // printf("]\n");
-
-    // destroyArray(A);
-    // destroyArray(B);
-    // destroyArray(MUL);
+    destroyArray(A);
+    destroyArray(B);
+    destroyArray(MUL);
+    destroyPointer(RES);
+    destroyPointer(AH);
+    destroyPointer(BH);
 
     return 0;
 }

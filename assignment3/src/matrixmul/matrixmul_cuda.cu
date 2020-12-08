@@ -13,8 +13,8 @@ nvprof ./matrixmul_cuda.x
  #include <math.h>
  #include "matrix_lib.h"
  
- #define TILE_WIDTH 4 //size of smallest block
- #define ROWN 8 // NRow that defines the upper bond
+ #define TILE_WIDTH 2 //size of smallest block
+ #define ROWN 6 // NRow that defines the upper bond
 
  //non shared
  __global__ void
@@ -31,6 +31,7 @@ nvprof ./matrixmul_cuda.x
           {
                    Pd[row*WIDTH + col]+= Md[row * TILE_WIDTH + k ] * Nd[ k * WIDTH + col] ;
                    //ans[i*N + j] += (x[i*COL+k] * y[k*N+j]);
+                   //printf("[%d %d %d] => %f => %f * %f\n",row,col,k,Pd[row*WIDTH + col], Md[row * TILE_WIDTH + k ], Nd[ k * WIDTH + col]);
           }
  }
  
@@ -58,8 +59,9 @@ nvprof ./matrixmul_cuda.x
           __syncthreads() ; // for syncronizeing the threads
  
           // Do for tile
-            for ( int k = 0; k<TILE_WIDTH ; k++ )
-                        Pd[row*WIDTH + col]+= Mds[threadIdx.x][k] * Nds[k][threadIdx.y] ;
+            for ( int k = 0; k < TILE_WIDTH ; k++ ) {
+                Pd[row*WIDTH + col]+= Mds[threadIdx.x][k] * Nds[k][threadIdx.y] ;
+            }
           __syncthreads() ; // for syncronizeing the threads
       }
  }
@@ -108,7 +110,7 @@ nvprof ./matrixmul_cuda.x
    // printMatrix1D(array2_d,WIDTH*TILE_WIDTH);
  
    //calling kernal
-   dim3 dimGrid ( WIDTH/TILE_WIDTH , TILE_WIDTH ,1 ) ;
+   dim3 dimGrid ( WIDTH/TILE_WIDTH , WIDTH/TILE_WIDTH ,1 ) ;
    dim3 dimBlock( TILE_WIDTH, TILE_WIDTH, 1 ) ;
  
  // Change if 0 to if 1 for running non shared code and make if 0 for shared memory code

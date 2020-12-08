@@ -27,7 +27,8 @@ for(i=0;i<N;i++) //row
         {
             for(k=0;k<COL;k++) //col
             {
-                ans[i*N + j] += (x[i*N+k] * y[k*N+j]);
+                ans[i*N + j] += (x[i*COL+k] * y[k*N+j]);
+                //printf("[%d %d %d] => %f => %f * %f\n", i, j, k, ans[i*N + j],x[i*COL+k], y[k*N+j]);
             }
         }
     }  

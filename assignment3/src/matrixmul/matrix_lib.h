@@ -35,6 +35,22 @@ void matrix_mul(int ***data_ptr, int **A, int **B, int row, int col)
     *data_ptr = data;
 }
 
+void matrix_mul_A(int **data_ptr, int **A, int **B, int row, int col)
+{
+    int i, j, k;
+
+    for (i = 0; i < row; i++)
+    {
+        for (j = 0; j < row; j++)
+        {
+            for (k = 0; k < col; k++)
+            {
+                data_ptr[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+}
+
 void printMatrix(int **arr, int row, int col)
 {
     int i = 0, j = 0;
@@ -67,18 +83,6 @@ void destroyArray(int **arr)
 {
     free(*arr);
     free(arr);
-}
-
-int **create_Array(int row, int col)
-{
-    int *values = calloc(row * col, sizeof(int));
-    int **rows = malloc(col * sizeof(int *));
-    int i = 0;
-    for (i = 0; i < col; ++i)
-    {
-        rows[i] = values + i * row;
-    }
-    return rows;
 }
 
 void init_data(int ***data_ptr, int dim_x, int dim_y, int val)

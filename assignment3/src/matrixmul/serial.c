@@ -28,7 +28,7 @@ int main()
     printMatrix(B, col, row);
     printf("]\n");
     
-    matrix_mul(&MUL,A,B,row,col);
+    matrix_mul_A(MUL,A,B,row,col);
     
     printf("MUL = [\n");
     printMatrix(MUL, row, row);

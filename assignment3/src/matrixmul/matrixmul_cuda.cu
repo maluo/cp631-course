@@ -11,10 +11,25 @@ nvprof ./matrixmul_cuda.x
  #include <math.h>
  
  #define TILE_WIDTH 2
- #define ROWN 4
+ #define ROWN 6
  
  /*matrix multiplication kernels*/
  
+ matrix_mul_A( float **MUL, float **A, float **B, int row, int col) {
+   int i, j, k;
+
+    for (i = 0; i < row; i++)
+    {
+        for (j = 0; j < row; j++)
+        {
+            for (k = 0; k < col; k++)
+            {
+               MUL[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+ }
+
  //non shared
  __global__ void
  MatrixMul( float *Md , float *Nd , float *Pd , const int WIDTH )
@@ -65,8 +80,11 @@ nvprof ./matrixmul_cuda.x
  int main ()
  {
     const int WIDTH = ROWN ;
-    float array1_h[WIDTH][WIDTH] ,array2_h[WIDTH][WIDTH],
-                      result_array_h[WIDTH][WIDTH] ,M_result_array_h[WIDTH][WIDTH]  ;
+    float array1_h[WIDTH][WIDTH] ,
+          array2_h[WIDTH][WIDTH],
+          result_array_h[WIDTH][WIDTH] ,
+          M_result_array_h[WIDTH][WIDTH] ;
+          
    float *array1_d , *array2_d ,*result_array_d  ,*M_result_array_d ; // device array
    int i , j ;
    //input in host array
@@ -116,10 +134,15 @@ nvprof ./matrixmul_cuda.x
  
  #endif
   
- #if 1
+ #if 0
  
                 MatrixMulSh<<<dimGrid,dimBlock>>> ( array1_d , array2_d ,M_result_array_d , WIDTH) ;
  
+ #endif
+
+ #if 1
+               //host version, test with CPU code
+               matrix_mul_A(result_array_h,array1_h,array2_h,WIDTH,TILE_WIDTH);
  #endif
  
    // all gpu function blocked till kernel is working

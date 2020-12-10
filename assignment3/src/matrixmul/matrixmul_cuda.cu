@@ -77,6 +77,21 @@ nvprof ./matrixmul_cuda.x
           
    float *array1_d , *array2_d ,*result_array_d  ,*M_result_array_d ; // device array
    int i , j ;
+   int nerror=0; //compute errors and bias
+
+   //Before we start, let run a serial at the mean while
+   //To be notifed, all serial operations are wrapped in matrix_lib.h
+    float **A, **B, **MUL;
+    float *AH, *BH, *RES;
+
+    init_data(&A, WIDTH, TILE_WIDTH, 2);
+    init_data(&B, TILE_WIDTH, WIDTH, 2);
+    init_data_1D(&RES,WIDTH*WIDTH,0);
+    init_data(&MUL, WIDTH, WIDTH, 0);
+
+    GET_2D_TO_1D_Float(&AH,A,WIDTH,TILE_WIDTH);//Array allocation inside function
+    GET_2D_TO_1D_Float(&BH,B,TILE_WIDTH,WIDTH);//Array allocation inside function
+
 
    //input in host array
    for ( i = 0 ; i<WIDTH ; i++ )
@@ -126,20 +141,41 @@ nvprof ./matrixmul_cuda.x
  
  #endif
  
+   cpuMatMul(AH,BH,RES,WIDTH,TILE_WIDTH);
+   GET_1D_TO_2D_Float(RES,MUL,WIDTH,WIDTH);
+
    // all gpu function blocked till kernel is working
    //copy back result_array_d to result_array_h
    cudaMemcpy(M_result_array_h , M_result_array_d , WIDTH*WIDTH*sizeof(float) ,
                                      cudaMemcpyDeviceToHost) ;
- 
+
+   /* guarantee synchronization */
+   cudaDeviceSynchronize();
+
+   
    //printf the result array
    for ( i = 0 ; i<WIDTH ; i++ )
    {
        for ( j = 0 ; j < WIDTH ; j++ )
       {
          printf ("%f   ",M_result_array_h[i][j] ) ;
+         if(M_result_array_h[i][j]!=MUL[i][j]) {nerror=nerror+1;}
       }
-  printf ("\n") ;
- }
+   printf ("\n") ;
+   }
+   printf("\nTest comparison shows %d errors\n",nerror);
+
+   cudaFree(array1_d);
+   cudaFree(array2_d);
+   cudaFree(result_array_d);
+   cudaFree(M_result_array_d);
+
+   destroyArray(A);
+   destroyArray(B);
+   destroyArray(MUL);
+   destroyPointer(RES);
+   destroyPointer(AH);
+   destroyPointer(BH);
   //system("pause") ;
  }
  

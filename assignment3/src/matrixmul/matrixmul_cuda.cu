@@ -2,7 +2,7 @@
 
  /*
 The program will calculate 
-[N*K]*[K*N] matrix, however, N needs to be 2K in this implementation to be honest.
+[N*K]*[K*N] matrix, N = R * K
 Some of serial functions and operations has been wrapped in matrix_lib.h
 nvcc -arch=sm_60 -O2 matrixmul_cuda.cu -o ./matrixmul_cuda.x
 nvprof ./matrixmul_cuda.x

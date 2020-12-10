@@ -13,8 +13,8 @@ nvprof ./matrixmul_cuda.x
  #include <math.h>
  #include "matrix_lib.h"
  
- #define TILE_WIDTH 2 //size of smallest block
- #define ROWN 6 // NRow that defines the upper bond
+ #define TILE_WIDTH 32 //size of smallest block
+ #define ROWN 128 // NRow that defines the upper bond
 
  //non shared
  __global__ void

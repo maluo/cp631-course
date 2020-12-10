@@ -7,7 +7,7 @@
 //Fix Number
 #define MAX_COL 2
 //Could be changed to anything
-#define N 6
+#define N 6 //N would be K*MAX_COL
 
 int main()
 {
